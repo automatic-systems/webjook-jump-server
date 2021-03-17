@@ -11,16 +11,18 @@ var app = express();
 
 var httpServer = http.createServer(app);
 var httpsServer = https.createServer(credentials, app);
-app.get("/webhook", async (req, res) => {
-  console.log(req.socket.remoteAddress, req.get("host"), req.get("origin"));
-  if (req.get("host") !== "192.168.1.18 ")
-    res.json({ success: false, message: "not authorized" });
-  else {
-    var response = await axios.get("https://youtube.com/");
-    response.data.pipe(res);
-    // return res.json({success:true,message:"You are authorized!"})
+async function handler(req, res)  {
+    console.log(req.socket.remoteAddress, req.get("host"), req.get("origin"));
+    if (req.get("host") !== "192.168.1.18")
+      res.json({ success: false, message: "not authorized" });
+    else {
+      var response = await axios.get("https://youtube.com/");
+      response.data.pipe(res);
+      // return res.json({success:true,message:"You are authorized!"})
+    }
   }
-});
+  app.post("/webhook",handler );
+  app.get("/webhook",handler );
 
 httpServer.listen(8080, (p, h) => console.log(`HTTPS Server listening `));
 httpsServer.listen(8443, (p, h) => console.log(`HTTPS Server listening`));
