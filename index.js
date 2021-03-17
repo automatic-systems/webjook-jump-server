@@ -2,13 +2,14 @@ var fs = require("fs");
 var http = require("http");
 var https = require("https");
 var { default: axios } = require("axios");
+var bodyParser = require('body-parser')
 var privateKey = fs.readFileSync("key.pem", "utf8");
 var certificate = fs.readFileSync("cert.pem", "utf8");
 
 var credentials = { key: privateKey, cert: certificate, passphrase: "1234" };
 var express = require("express");
 var app = express();
-
+app.use(bodyParser.json({extended:true}))
 var httpServer = http.createServer(app);
 var httpsServer = https.createServer(credentials, app);
 async function handler(req, res)  {
